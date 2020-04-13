@@ -11,6 +11,7 @@ from stable_baselines.common.vec_env import VecEnv
 from stable_baselines.common.math_util import safe_mean, unscale_action, scale_action
 from stable_baselines.common.schedules import get_schedule_fn
 from stable_baselines.common.buffers import ReplayBuffer
+from stable_baselines.her import HindsightExperienceReplayWrapper
 from stable_baselines.td3.policies import TD3Policy
 
 
@@ -346,7 +347,10 @@ class TD3(OffPolicyRLModel):
                     obs_, new_obs_, reward_ = obs, new_obs, reward
 
                 # Store transition in the replay buffer.
-                self.replay_buffer.add(obs_, action, reward_, new_obs_, float(done))
+                if isinstance(self.replay_buffer, HindsightExperienceReplayWrapper):
+                    self.replay_buffer.add(obs_, action, reward_, new_obs_, float(done), info)
+                else:
+                    self.replay_buffer.add(obs_, action, reward_, new_obs_, float(done))
                 obs = new_obs
                 # Save the unnormalized observation
                 if self._vec_normalize_env is not None:

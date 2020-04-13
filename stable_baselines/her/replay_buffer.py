@@ -151,7 +151,7 @@ class HindsightExperienceReplayWrapper(object):
             obs_t, action, reward, obs_tp1, done, info = transition
 
             # Add to the replay buffer
-            self.replay_buffer.add(obs_t, action, reward, obs_tp1, done, info)
+            self.replay_buffer.add(obs_t, action, reward, obs_tp1, done)
 
             # We cannot sample a goal from the future in the last step of an episode
             if (transition_idx == len(self.episode_transitions) - 1 and
@@ -182,4 +182,4 @@ class HindsightExperienceReplayWrapper(object):
                 obs, next_obs = map(self.env.convert_dict_to_obs, (obs_dict, next_obs_dict))
 
                 # Add artificial transition to the replay buffer
-                self.replay_buffer.add(obs, action, reward, next_obs, done, info)
+                self.replay_buffer.add(obs, action, reward, next_obs, done)

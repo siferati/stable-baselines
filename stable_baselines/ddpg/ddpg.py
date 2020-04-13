@@ -19,6 +19,7 @@ from stable_baselines.common.buffers import ReplayBuffer
 from stable_baselines.common.math_util import unscale_action, scale_action
 from stable_baselines.common.mpi_running_mean_std import RunningMeanStd
 from stable_baselines.ddpg.policies import DDPGPolicy
+from stable_baselines.her import HindsightExperienceReplayWrapper
 
 
 def normalize(tensor, stats):
@@ -625,7 +626,7 @@ class DDPG(OffPolicyRLModel):
         action = np.clip(action, -1, 1)
         return action, q_value
 
-    def _store_transition(self, obs, action, reward, next_obs, done):
+    def _store_transition(self, obs, action, reward, next_obs, done, info=None):
         """
         Store a transition in the replay buffer
 
@@ -634,9 +635,13 @@ class DDPG(OffPolicyRLModel):
         :param reward: (float] the reward
         :param next_obs: ([float] or [int]) the current observation
         :param done: (bool) Whether the episode is over
+        :param info: (dict) extra values used to compute reward when using HER
         """
         reward *= self.reward_scale
-        self.replay_buffer.add(obs, action, reward, next_obs, float(done))
+        if isinstance(self.replay_buffer, HindsightExperienceReplayWrapper):
+            self.replay_buffer.add(obs, action, reward, next_obs, float(done), info)
+        else:
+            self.replay_buffer.add(obs, action, reward, next_obs, float(done))
         if self.normalize_observations:
             self.obs_rms.update(np.array([obs]))
 
@@ -916,7 +921,7 @@ class DDPG(OffPolicyRLModel):
                                 # Avoid changing the original ones
                                 obs_, new_obs_, reward_ = obs, new_obs, reward
 
-                            self._store_transition(obs_, action, reward_, new_obs_, done)
+                            self._store_transition(obs_, action, reward_, new_obs_, done, info)
                             obs = new_obs
                             # Save the unnormalized observation
                             if self._vec_normalize_env is not None:
