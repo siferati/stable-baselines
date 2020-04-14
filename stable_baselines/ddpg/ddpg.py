@@ -19,7 +19,6 @@ from stable_baselines.common.buffers import ReplayBuffer
 from stable_baselines.common.math_util import unscale_action, scale_action
 from stable_baselines.common.mpi_running_mean_std import RunningMeanStd
 from stable_baselines.ddpg.policies import DDPGPolicy
-from stable_baselines.her import HindsightExperienceReplayWrapper
 
 
 def normalize(tensor, stats):
@@ -626,7 +625,7 @@ class DDPG(OffPolicyRLModel):
         action = np.clip(action, -1, 1)
         return action, q_value
 
-    def _store_transition(self, obs, action, reward, next_obs, done, info=None):
+    def _store_transition(self, obs, action, reward, next_obs, done, info):
         """
         Store a transition in the replay buffer
 
@@ -638,10 +637,7 @@ class DDPG(OffPolicyRLModel):
         :param info: (dict) extra values used to compute reward when using HER
         """
         reward *= self.reward_scale
-        if isinstance(self.replay_buffer, HindsightExperienceReplayWrapper):
-            self.replay_buffer.add(obs, action, reward, next_obs, float(done), info)
-        else:
-            self.replay_buffer.add(obs, action, reward, next_obs, float(done))
+        self.add_to_replay_buffer(obs, action, reward, next_obs, done, info)
         if self.normalize_observations:
             self.obs_rms.update(np.array([obs]))
 

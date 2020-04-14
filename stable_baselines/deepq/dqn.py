@@ -11,7 +11,6 @@ from stable_baselines.common.schedules import LinearSchedule
 from stable_baselines.common.buffers import ReplayBuffer, PrioritizedReplayBuffer
 from stable_baselines.deepq.build_graph import build_train
 from stable_baselines.deepq.policies import DQNPolicy
-from stable_baselines.her import HindsightExperienceReplayWrapper
 
 
 class DQN(OffPolicyRLModel):
@@ -233,10 +232,7 @@ class DQN(OffPolicyRLModel):
                     # Avoid changing the original ones
                     obs_, new_obs_, reward_ = obs, new_obs, rew
                 # Store transition in the replay buffer.
-                if isinstance(self.replay_buffer, HindsightExperienceReplayWrapper):
-                    self.replay_buffer.add(obs_, action, reward_, new_obs_, float(done), info)
-                else:
-                    self.replay_buffer.add(obs_, action, reward_, new_obs_, float(done))
+                self.add_to_replay_buffer(obs_, action, reward_, new_obs_, done, info)
                 obs = new_obs
                 # Save the unnormalized observation
                 if self._vec_normalize_env is not None:

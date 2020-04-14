@@ -60,7 +60,7 @@ class HindsightExperienceReplayWrapper(object):
         self.episode_transitions = []
         self.replay_buffer = replay_buffer
 
-    def add(self, obs_t, action, reward, obs_tp1, done, info=None):
+    def add(self, obs_t, action, reward, obs_tp1, done, info):
         """
         add a new transition to the buffer
 

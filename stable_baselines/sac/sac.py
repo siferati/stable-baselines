@@ -10,7 +10,6 @@ from stable_baselines.common.vec_env import VecEnv
 from stable_baselines.common.math_util import safe_mean, unscale_action, scale_action
 from stable_baselines.common.schedules import get_schedule_fn
 from stable_baselines.common.buffers import ReplayBuffer
-from stable_baselines.her import HindsightExperienceReplayWrapper
 from stable_baselines.sac.policies import SACPolicy
 from stable_baselines import logger
 
@@ -428,10 +427,7 @@ class SAC(OffPolicyRLModel):
                     obs_, new_obs_, reward_ = obs, new_obs, reward
 
                 # Store transition in the replay buffer.
-                if isinstance(self.replay_buffer, HindsightExperienceReplayWrapper):
-                    self.replay_buffer.add(obs_, action, reward_, new_obs_, float(done), info)
-                else:
-                    self.replay_buffer.add(obs_, action, reward_, new_obs_, float(done))
+                self.add_to_replay_buffer(obs_, action, reward_, new_obs_, done, info)
                 obs = new_obs
                 # Save the unnormalized observation
                 if self._vec_normalize_env is not None:
