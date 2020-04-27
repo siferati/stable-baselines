@@ -979,7 +979,7 @@ class OffPolicyRLModel(BaseRLModel):
 
         self.replay_buffer = replay_buffer
 
-    def is_using_her(self):
+    def is_using_her(self) -> bool:
         """
         Check if is using HER
 

@@ -15,6 +15,7 @@ Breaking Changes:
 New Features:
 ^^^^^^^^^^^^^
 - Added momentum parameter to A2C for the embedded RMSPropOptimizer (@kantneel)
+- ActionNoise is now an abstract base class and implements ``__call__``, ``NormalActionNoise`` and ``OrnsteinUhlenbeckActionNoise`` have return types (@solliet)
 - HER now passes info dictionary to compute_reward, allowing for the computation of rewards that are independent of the goal (@tirafesi)
 
 Bug Fixes:
@@ -36,6 +37,7 @@ Documentation:
 ^^^^^^^^^^^^^^
 - Fix typos (@caburu)
 - Fix typos in PPO2 (@kvenkman)
+- Removed ``stable_baselines\deepq\experiments\custom_cartpole.py`` (@aakash94)
 
 
 Release 2.10.0 (2020-03-11)
@@ -691,4 +693,4 @@ Thanks to @bjmuld @iambenzo @iandanforth @r7vme @brendenpetersen @huvar @abhiskk
 @XMaster96 @kantneel @Pastafarianist @GerardMaggiolino @PatrickWalter214 @yutingsz @sc420 @Aaahh @billtubbs
 @Miffyli @dwiel @miguelrass @qxcv @jaberkow @eavelardev @ruifeng96150 @pedrohbtp @srivatsankrishnan @evilsocket
 @MarvineGothic @jdossgollin @SyllogismRXS @rusu24edward @jbulow @Antymon @seheevic @justinkterry @edbeeching
-@flodorner @KuKuXia @NeoExtended @solliet @mmcenta @richardwu @tirafesi @caburu @johannes-dornheim @kvenkman
+@flodorner @KuKuXia @NeoExtended @solliet @mmcenta @richardwu @tirafesi @caburu @johannes-dornheim @kvenkman @aakash94
