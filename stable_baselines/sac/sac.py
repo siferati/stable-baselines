@@ -1,4 +1,3 @@
-import sys
 import time
 import warnings
 
@@ -242,7 +241,6 @@ class SAC(OffPolicyRLModel):
                     # policy_loss = (policy_kl_loss + policy_regularization_loss)
                     policy_loss = policy_kl_loss
 
-
                     # Target for value fn regression
                     # We update the vf towards the min of two Q-functions in order to
                     # reduce overestimation bias from function approximation error.
@@ -260,8 +258,8 @@ class SAC(OffPolicyRLModel):
                     value_optimizer = tf.train.AdamOptimizer(learning_rate=self.learning_rate_ph)
                     values_params = tf_util.get_trainable_vars('model/values_fn')
 
-                    source_params = tf_util.get_trainable_vars("model/values_fn/vf")
-                    target_params = tf_util.get_trainable_vars("target/values_fn/vf")
+                    source_params = tf_util.get_trainable_vars("model/values_fn")
+                    target_params = tf_util.get_trainable_vars("target/values_fn")
 
                     # Polyak averaging for target variables
                     self.target_update_op = [
@@ -306,7 +304,7 @@ class SAC(OffPolicyRLModel):
 
                 # Retrieve parameters that must be saved
                 self.params = tf_util.get_trainable_vars("model")
-                self.target_params = tf_util.get_trainable_vars("target/values_fn/vf")
+                self.target_params = tf_util.get_trainable_vars("target/values_fn")
 
                 # Initialize Variables and target network
                 with self.sess.as_default():
@@ -530,7 +528,7 @@ class SAC(OffPolicyRLModel):
         observation = observation.reshape((-1,) + self.observation_space.shape)
         actions = self.policy_tf.step(observation, deterministic=deterministic)
         actions = actions.reshape((-1,) + self.action_space.shape)  # reshape to the correct action shape
-        actions = unscale_action(self.action_space, actions) # scale the output for the prediction
+        actions = unscale_action(self.action_space, actions)  # scale the output for the prediction
 
         if not vectorized_env:
             actions = actions[0]
