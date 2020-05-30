@@ -637,7 +637,7 @@ class DDPG(OffPolicyRLModel):
         :param info: (dict) extra values used to compute reward when using HER
         """
         reward *= self.reward_scale
-        self.add_to_replay_buffer(obs, action, reward, next_obs, done, info)
+        self.replay_buffer_add(obs, action, reward, next_obs, done, info)
         if self.normalize_observations:
             self.obs_rms.update(np.array([obs]))
 
