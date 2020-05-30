@@ -985,10 +985,11 @@ class OffPolicyRLModel(BaseRLModel):
 
         :return: (bool) Whether is using HER or not
         """
-        from stable_baselines.her import HindsightExperienceReplayWrapper
+        # Avoid circular import
+        from stable_baselines.her.replay_buffer import HindsightExperienceReplayWrapper
         return isinstance(self.replay_buffer, HindsightExperienceReplayWrapper)
 
-    def add_to_replay_buffer(self, obs_t, action, reward, obs_tp1, done, info):
+    def replay_buffer_add(self, obs_t, action, reward, obs_tp1, done, info):
         """
         Add a new transition to the replay buffer
 
@@ -999,7 +1000,8 @@ class OffPolicyRLModel(BaseRLModel):
         :param done: (bool) is the episode done
         :param info: (dict) extra values used to compute the reward when using HER
         """
-        kwargs = {'info': info} if self.is_using_her() else {}
+        # Pass info dict when using HER, as it can be used to compute the reward
+        kwargs = dict(info=info) if self.is_using_her() else {}
         self.replay_buffer.add(obs_t, action, reward, obs_tp1, float(done), **kwargs)
 
     @abstractmethod
